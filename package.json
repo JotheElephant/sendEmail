@@ -1,0 +1,24 @@
+{
+  "name": "sendemail",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JotheElephant/sendEmail.git"
+  },
+  "author": "Johanna Tchon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JotheElephant/sendEmail/issues"
+  },
+  "homepage": "https://github.com/JotheElephant/sendEmail#readme",
+  "dependencies": {
+    "sendgrid": "^5.2.2",
+    "sparkpost": "^2.1.2"
+  }
+}
