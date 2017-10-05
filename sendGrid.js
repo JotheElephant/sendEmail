@@ -12,7 +12,7 @@ SendGridProvider.prototype.send = function({from, to, subject, message}) {
   var mail = new helper.Mail(fromEmail, subject, toEmail, message);
   var request = this.sendGridAPI.emptyRequest({
     method: 'POST',
-    path: '/v3/mail/sd',
+    path: '/v3/mail/send',
     body: mail.toJSON()
   });
 

@@ -1,34 +1,38 @@
 
 var SendGridProvider = require('./sendGrid').SendGridProvider;
 var SparkPostProvider = require('./sparkPost').SparkPostProvider;
+var helpers = require('./helpers');
 
 //emailService input must include an object with from, to, subject, and message properties
 function emailService(email) {
+  this.inputValid = true;
+  this.email = email;
+  this.message = "";
+}
 
-  //validate inputs
-  var inputValid = true; //input is valid until proven false
-  var message = "Message is sending..."; //the message will be this unless it runs into conditional statements below
-  var fromCheck = validateEmail(email.from);
-  var toCheck = validateEmail(email.to);
+emailService.prototype.validateContent = function(email) {
   //check from and to email addresses, subject and message do not exist
-  if (!(email.from && email.to && email.subject && email.message)) {
-    inputValid = false;
-    message = "Invalid Input: all fields (i.e. from, to, subject, message) must be provided";
+  if (!email.from && !email.to && (!email.subject || !email.message)) {
+    this.message = "Invalid Input: all fields (i.e. from, to, subject, message) must be provided";
+    this.inputValid = false;
   //check each property type is a string
-  } else if (!(typeof email.from === 'string' && typeof email.to === 'string' && typeof email.subject === 'string' && typeof email.message === 'string')) {
-    inputValid = false;
-    message = "Invalid Input: all fields must be in string format";
+  } else if (helpers.isString(email.from) && helpers.isString(email.to) && helpers.isString(email.subject) && helpers.isString(email.message)) {
+    this.message = "Invalid Input: all fields must be in string format";
+    this.inputValid = false;
   //check from and to email addresses are in incorrect form using regex
-  } else if (!fromCheck || !toCheck) {
-    inputValid = false;
-    message = "Invalid Input: one or two email addressed do not follow proper format";
+  } else if (!helpers.validateEmailAddress(email.from) || !helpers.validateEmailAddress(email.to)) {
+    this.message = "Invalid Input: one or both email addresses do not follow proper format";
+    this.inputValid = false;
   }
 
+}
+
+emailService.prototype.sendEmail = function() {
+  this.validateContent(this.email);
   //After inputs are validated
-  if (inputValid) {
-    console.log(message);
+  if (this.inputValid) {
     var sendGrid = new SendGridProvider();
-    return sendGrid.send(email)
+    return sendGrid.send(this.email)
       .then( (sgresponse) => {
         console.log("SendGrid success!")
       })
@@ -36,7 +40,7 @@ function emailService(email) {
         if(sgerror) {
           console.error('SendGrid Error: ', sgerror);
           var sparkPost = new SparkPostProvider();
-          return sparkPost.send(email);
+          return sparkPost.send(this.email);
         }
       })
       .then( (spresponse) => {
@@ -51,13 +55,5 @@ function emailService(email) {
       })
   }
   //show validation message if inputValid is false
-  console.log(message);
+  console.error(message);
 }
-
-//validateEmail:  helper function to validate email address using regex
-function validateEmail(emailAddress) {
-  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(emailAddress);
-}
-
-emailService({from: "jo@mail.johannatchon.com", to: "johanna.tchon@gmail.com", subject: "What's up?!", message: "Hallo! How are you? Meoooow"});
