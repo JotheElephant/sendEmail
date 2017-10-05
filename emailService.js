@@ -45,7 +45,7 @@ emailService.prototype.sendEmail = function() {
       })
       .then( (spresponse) => {
         if(spresponse) {
-          console.log("SparkPost success!", spresponse.status);
+          console.log("SparkPost success!");
         }
       })
       .catch( (sperror) => {
@@ -55,5 +55,5 @@ emailService.prototype.sendEmail = function() {
       })
   }
   //show validation message if inputValid is false
-  console.error(message);
+  console.error(this.message);
 }
