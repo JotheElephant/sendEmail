@@ -1,9 +1,12 @@
-var config = require('./config').apiKey;
 var sp = require('sparkpost');
-var client = new sp(config.SPARKPOST_API_KEY);
 
-var sparkPostProvider = function ({from, to, subject, message}) {
-  return client.transmissions.send({
+var SparkPostProvider = function () {
+  this.apiKey = require('./config').apiKey.SPARKPOST_API_KEY;
+  this.sparkPostAPI = new sp(this.apiKey);
+};
+
+SparkPostProvider.prototype.send = function ({from, to, subject, message}) {
+  var body = {
     content: {
       from: from,
       subject: subject,
@@ -12,7 +15,8 @@ var sparkPostProvider = function ({from, to, subject, message}) {
     recipients: [
       {address: to}
     ]
-  })
-}
+  };
+  return this.sparkPostAPI.transmissions.send(body);
+};
 
-module.exports.sparkPostProvider = sparkPostProvider;
+module.exports.SparkPostProvider = SparkPostProvider;

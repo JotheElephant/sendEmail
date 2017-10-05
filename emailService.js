@@ -1,6 +1,6 @@
 
-var sendGridProvider = require('./sendGrid').sendGridProvider;
-var sparkPostProvider = require('./sparkPost').sparkGridProvider;
+var SendGridProvider = require('./sendGrid').SendGridProvider;
+var SparkPostProvider = require('./sparkPost').SparkPostProvider;
 
 //emailService input must include an object with from, to, subject, and message properties
 function emailService(email) {
@@ -27,14 +27,16 @@ function emailService(email) {
   //After inputs are validated
   if (inputValid) {
     console.log(message);
-    return sendGridProvider(email)
+    var sendGrid = new SendGridProvider();
+    return sendGrid.send(email)
       .then( (sgresponse) => {
         console.log("SendGrid success!")
       })
       .catch( (sgerror) => {
         if(sgerror) {
           console.error('SendGrid Error: ', sgerror);
-          return sparkPostProvider(email)
+          var sparkPost = new SparkPostProvider();
+          return sparkPost.send(email);
         }
       })
       .then( (spresponse) => {
