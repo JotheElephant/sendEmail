@@ -1,6 +1,6 @@
 
-var SendGrid = require('./sendGrid').send;
-var SparkPost = require('./sparkPost').spark;
+var sendGridProvider = require('./sendGrid').sendGridProvider;
+var sparkPostProvider = require('./sparkPost').sparkGridProvider;
 
 //emailService input must include an object with from, to, subject, and message properties
 function emailService(email) {
@@ -27,14 +27,14 @@ function emailService(email) {
   //After inputs are validated
   if (inputValid) {
     console.log(message);
-    return SendGrid(email)
+    return sendGridProvider(email)
       .then( (sgresponse) => {
         console.log("SendGrid success!")
       })
       .catch( (sgerror) => {
         if(sgerror) {
-          console.log('SendGrid Error: ', sgerror);
-          return SparkPost(email)
+          console.error('SendGrid Error: ', sgerror);
+          return sparkPostProvider(email)
         }
       })
       .then( (spresponse) => {
@@ -44,7 +44,7 @@ function emailService(email) {
       })
       .catch( (sperror) => {
         if(sperror) {
-          console.log("SparkPost Error: ", sperror);
+          console.error("SparkPost Error: ", sperror);
         }
       })
   }
@@ -57,3 +57,5 @@ function validateEmail(emailAddress) {
   var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(emailAddress);
 }
+
+emailService({from: "jo@mail.johannatchon.com", to: "johanna.tchon@gmail.com", subject: "What's up?!", message: "Hallo! How are you? Meoooow"});

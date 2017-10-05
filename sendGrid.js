@@ -1,7 +1,7 @@
 var config = require('./config').apiKey;
 var helper = require('sendgrid').mail;
 
-var sendgrid = function ({from, to, subject, message}) {
+var sendGridProvider = function ({from, to, subject, message}) {
   //store to, from, subject, message on class
   var fromEmail = new helper.Email(from);
   var toEmail = new helper.Email(to);
@@ -20,6 +20,6 @@ var sendgrid = function ({from, to, subject, message}) {
   return sg.API(request)
 }
 
-module.exports.send = sendgrid;
+module.exports.sendGridProvider = sendGridProvider;
 
 

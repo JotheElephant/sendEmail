@@ -1,8 +1,8 @@
 var config = require('./config').apiKey;
-var SparkPost = require('sparkpost');
-var client = new SparkPost(config.SPARKPOST_API_KEY);
+var sp = require('sparkpost');
+var client = new sp(config.SPARKPOST_API_KEY);
 
-var spark = function ({from, to, subject, message}) {
+var sparkPostProvider = function ({from, to, subject, message}) {
   return client.transmissions.send({
     content: {
       from: from,
@@ -15,4 +15,4 @@ var spark = function ({from, to, subject, message}) {
   })
 }
 
-module.exports.spark = spark;
+module.exports.sparkPostProvider = sparkPostProvider;
